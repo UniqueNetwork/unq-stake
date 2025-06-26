@@ -26,7 +26,7 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.6.0",
-    "sdk-2": "npm:@unique-nft/sdk@2.6.2-0",
+    "sdk-2": "npm:@unique-nft/sdk@2.8.0",
     "sonner": "^2.0.3",
     "tailwind-merge": "^3.3.0"
   },
@@ -47,5 +47,6 @@
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.30.1",
     "vite": "^6.3.5"
-  }
+  },
+  "packageManager": "pnpm@9.12.2+sha256.2ef6e547b0b07d841d605240dce4d635677831148cd30f6d564b8f4f928f73d2"
 }
