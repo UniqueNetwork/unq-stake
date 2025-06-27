@@ -20,7 +20,7 @@ interface UNIQUE_SDK_SignTxResultResponse {
   signature: string
 }
 
-interface BalanceDataItem {
+export interface BalanceDataItem {
     raw: string
     amount: string
     formatted: string

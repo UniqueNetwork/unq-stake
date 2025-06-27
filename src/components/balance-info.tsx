@@ -1,100 +1,92 @@
 "use client"
 
-import { useWallet } from "@/context/wallet-context"
+import {type BalanceDataItem, useWallet} from '@/context/wallet-context'
 import { cn } from "../lib/utils"
 
 interface BalanceInfoProps {
   activeTab?: "stake" | "unstake"
 }
 
+type BalanceSpanProps = {
+  className?: string
+  value?: BalanceDataItem
+  isLoading?: boolean
+  displayDecimals?: number
+}
+
+export const BalanceSpan = (props: BalanceSpanProps) => {
+  const {
+    className = "st-font-medium",
+    value = {
+        raw: "0",
+        decimals: 18,
+        unit: "",
+    } as BalanceDataItem,
+    isLoading = false,
+    displayDecimals = 4,
+  } = props
+
+  if (isLoading) return <span className={className}>...</span>
+
+  const raw = BigInt(value.raw)
+  if (raw === 0n) return <span className={className}>0</span>
+
+  const divisor = 10n ** BigInt(value.decimals)
+  const whole = raw / divisor
+  const fraction = raw % divisor
+  const padded = fraction.toString().padStart(value.decimals, "0")
+  const displayFraction = padded.slice(0, displayDecimals)
+
+  const isNegligible = whole === 0n && displayFraction.split("").every((d) => d === "0")
+  if (isNegligible) return (<span className={className}>0</span>)
+
+  return (
+      <span className={cn("st-inline-flex st-items-baseline", className)}>
+      <span>{whole.toString()}</span>
+      <span className="st-ml-0.5 st-text-xs st-opacity-50">.{displayFraction}</span>
+      <span className="st-ml-1">{value.unit}</span>
+    </span>
+  )
+}
+
 export default function BalanceInfo({ activeTab = "stake" }: BalanceInfoProps) {
-  const { connected, walletAddress, tokenSymbol, isLoading, balanceData } = useWallet()
+  const { connected, walletAddress, isLoading, balanceData } = useWallet()
 
   if (!connected || !walletAddress) return null
 
   const isDataLoading = isLoading || !balanceData
 
-  const formatNumber = (raw: string, decimals: number = 18): string => {
-    const DISPLAY_DECIMALS = 4;
-    const value = BigInt(raw);
-
-    if (value === 0n) {
-      return "0";
-    }
-
-    let divisor = 1n;
-    for (let i = 0; i < decimals; i++) {
-      divisor *= 10n;
-    }
-
-    const whole = value / divisor;
-    const fraction = value % divisor;
-
-    const fullFractionStr = fraction.toString().padStart(decimals, "0");
-    const fracStrDisplay = fullFractionStr.substring(0, DISPLAY_DECIMALS);
-
-    if (whole === 0n && fracStrDisplay.split('').every(digit => digit === '0')) {
-      return "0";
-    }
-
-    return `${whole.toString()}.${fracStrDisplay}`;
-  };
-
-  const total = isDataLoading
-    ? "..."
-    : balanceData?.totalBalance
-      ? `${formatNumber(balanceData.totalBalance.raw, balanceData.totalBalance.decimals)} ${tokenSymbol}`
-      : `0 ${tokenSymbol}`
-
-  const staked = isDataLoading
-    ? "..."
-    : balanceData?.stakedBalance
-      ? `${formatNumber(balanceData.stakedBalance.raw, balanceData.stakedBalance.decimals)} ${tokenSymbol}`
-      : `0 ${tokenSymbol}`
-
-  const unstaked = isDataLoading
-    ? "..."
-    : balanceData?.unstakedBalance
-      ? `${formatNumber(balanceData.unstakedBalance.raw, balanceData.unstakedBalance.decimals)} ${tokenSymbol}`
-      : `0 ${tokenSymbol}`
-
-  const available = isDataLoading
-    ? "..."
-    : balanceData?.availableBalance
-      ? `${formatNumber(balanceData.availableBalance.raw, balanceData.availableBalance.decimals)} ${tokenSymbol}`
-      : `0 ${tokenSymbol}`
-
   return (
       <div className={cn("st-space-y-2")}>
         <div className={cn("st-flex st-justify-between")}>
           <span className={cn("st-text-gray-700 dark:st-text-gray-300")}>Total balance:</span>
-          <span className={cn("st-font-medium")}>{total}</span>
+          <BalanceSpan value={balanceData?.totalBalance} isLoading={isDataLoading} />
         </div>
 
         {activeTab === "stake" ? (
             <>
               <div className={cn("st-flex st-justify-between")}>
                 <span className={cn("st-text-gray-700 dark:st-text-gray-300")}>Staked volume:</span>
-                <span className={cn("st-font-medium")}>{staked}</span>
+                <BalanceSpan value={balanceData?.stakedBalance} isLoading={isDataLoading} />
               </div>
               <div className={cn("st-flex st-justify-between")}>
                 <span className={cn("st-text-gray-700 dark:st-text-gray-300")}>Pending unstake:</span>
-                <span className={cn("st-font-medium")}>{unstaked}</span>
+                <BalanceSpan value={balanceData?.unstakedBalance} isLoading={isDataLoading} />
               </div>
               <div className={cn("st-flex st-justify-between")}>
                 <span className={cn("st-text-gray-700 dark:st-text-gray-300")}>Available to stake:</span>
-                <span className={cn("st-font-medium")}>{available}</span>
+                <BalanceSpan value={balanceData?.availableBalance} isLoading={isDataLoading} />
               </div>
             </>
         ) : (
             <>
               <div className={cn("st-flex st-justify-between")}>
                 <span className={cn("st-text-gray-600 dark:st-text-gray-300")}>Pending unstake:</span>
-                <span className={cn("st-font-medium")}>{unstaked}</span>
+                <BalanceSpan value={balanceData?.unstakedBalance} isLoading={isDataLoading} />
               </div>
               <div className={cn("st-flex st-justify-between")}>
                 <span className={cn("st-text-gray-600 dark:st-text-gray-300")}>Staked volume:</span>
-                <span className={cn("st-font-medium")}>{staked}</span>
+                <BalanceSpan value={balanceData?.stakedBalance} isLoading={isDataLoading} />
               </div>
             </>
         )}
