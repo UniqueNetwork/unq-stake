@@ -1,4 +1,4 @@
-import { UniqueIndexer, UniqueIndexerInstance } from "sdk-2"
+import { UniqueIndexer, type UniqueIndexerInstance } from "sdk-2"
 import { Address } from "@unique-nft/sdk/utils"
 
 type EventsPageItems = Awaited<ReturnType<UniqueIndexerInstance["events"]>>["items"]
