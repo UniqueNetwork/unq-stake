@@ -8,10 +8,10 @@ import FAQ from "@/components/faq"
 import ProgressModal from "@/components/modals/progress-modal"
 import StatusModal from "@/components/modals/status-modal"
 import SuccessModal from "@/components/modals/success-modal"
-import Header from "@/components/header"
 import StakingHistory from "@/components/staking-history"
 import { TabProvider, useTab } from "@/context/tab-context"
 import { cn } from "../lib/utils"
+import { WalletButton } from '@/components/wallet-button.tsx';
 
 function StakingTabs() {
   const { activeTab, setActiveTab } = useTab()
@@ -135,9 +135,9 @@ function StakingTabs() {
 export default function StakingPage() {
   return (
     <div className={cn("st-flex st-flex-col st-min-h-screen")}>
-      <Header />
+
       <main className={cn("st-flex-grow")}>
-        <section className={cn("st-bg-gray-100 dark:st-bg-gray-900 st-py-16")}>
+        <section className={cn("st-bg-gray-100 dark:st-bg-gray-900 st-pt-16")}>
           <div className={cn("st-container st-mx-auto st-px-4 st-text-center")}>
             <h1 className={cn("st-text-4xl md:st-text-5xl st-font-bold st-mb-4")}>
               <span className={cn("st-text-gray-900 dark:st-text-white")}>UNIQUE STAKING HUB</span>
@@ -147,6 +147,10 @@ export default function StakingPage() {
             <p className={cn("st-text-xl")}>
               Earn 18% APY staking your UNQ and QTZ tokens
             </p>
+
+            <div className={cn("st-py-3")}>
+              <WalletButton />
+            </div>
           </div>
         </section>
 
