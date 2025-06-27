@@ -364,7 +364,6 @@ const transformAccount = useCallback(
   // Internal wallet setter logic
   const setWalletInternal = useCallback(
     (w: Wallet | undefined) => {
-      debugger;
       _setWallet(w)
       _setAccounts([])
       _setSelectedAccount(null)
