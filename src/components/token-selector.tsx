@@ -25,7 +25,7 @@ export default function TokenSelector({ selectedToken, onSelectToken }: TokenSel
               className={cn(
                   "st-flex st-items-center st-px-4 st-py-3 st-rounded-md st-text-sm st-font-medium st-cursor-pointer st-border",
                   selectedToken === "UNQ"
-                      ? "st-bg-white st-text-gray-800 st-border-blue-500"
+                      ? "st-bg-white st-text-gray-800 st-border-blue-500 st-border-4"
                       : "st-bg-white st-text-gray-700 st-border-gray-300"
               )}
           >
@@ -60,7 +60,7 @@ export default function TokenSelector({ selectedToken, onSelectToken }: TokenSel
               className={cn(
                   "st-flex st-items-center st-px-4 st-py-3 st-rounded-md st-text-sm st-font-medium st-cursor-pointer st-border",
                   selectedToken === "QTZ"
-                      ? "st-bg-white st-text-gray-800 st-border-red-500"
+                      ? "st-bg-white st-text-gray-800 st-border-red-500 st-border-4"
                       : "st-bg-white st-text-gray-700 st-border-gray-300"
               )}
           >
