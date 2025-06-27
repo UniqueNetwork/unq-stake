@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useMemo } from "react"
 import { cn } from "@/lib/utils"
 
 import { useTheme } from "next-themes"
@@ -9,7 +9,7 @@ import { useWallet } from "@/context/wallet-context"
 import WalletSelection from "./wallet-selection"
 
 export default function Header() {
-  const { connected, walletAddress } = useWallet()
+  const { connected, wallet, walletAddress } = useWallet()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false)
   const [isWalletDropdownOpen, setIsWalletDropdownOpen] = useState(false)
@@ -30,6 +30,19 @@ export default function Header() {
   useEffect(() => {
     setMounted(true)
   }, [])
+
+  const selectedWalletComponent = useMemo(() => {
+    if (!wallet) return null
+
+    return <div className={cn("st-flex st-items-center")}>
+        <img
+            src={wallet.logo.src}
+            alt={wallet.logo.alt}
+            className={cn("st-w-6 st-h-6 st-rounded-full")}
+        />
+        <span className={cn("st-ml-2 st-text-sm")}>{wallet.title || wallet.extensionName || 'Unknown Wallet'}</span>
+    </div>
+  }, [wallet])
 
   const toggleTheme = () => {
     const nextTheme = resolvedTheme === "dark" ? "light" : "dark"
@@ -61,7 +74,7 @@ export default function Header() {
                             "st-px-3 st-py-2 st-bg-gray-100 dark:st-bg-gray-700 st-text-gray-800 dark:st-text-gray-200 st-rounded-md"
                         )}
                     >
-                      {walletAddress?.slice(0, 6)}…{walletAddress?.slice(-6)}
+                      {selectedWalletComponent}
                     </button>
                     {isWalletDropdownOpen && (
                         <div

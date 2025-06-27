@@ -6,6 +6,7 @@ import type { Signer as PolkadotSigner, SignerResult } from "@polkadot/api/types
 import { Sdk } from "@unique-nft/sdk/full"
 import { getCookie, setCookie } from "@/utils/cookies"
 import type { SignerPayloadJSONDto } from "@unique-nft/sdk"
+import {useIsMobile} from '@/components/ui/use-mobile.tsx';
 
 const TOTAL_STAKES = 10;
 
@@ -112,6 +113,7 @@ const COOKIE_WALLET_NAME = "stakefin_wallet_name"
 
 export function WalletProvider({ children }: WalletProviderProps) {
   const [wallet, _setWallet] = useState<Wallet>()
+  const isMobile = useIsMobile()
   const [accounts, _setAccounts] = useState<IPolkadotExtensionAccountForSDK[]>([])
   const [selectedAccount, _setSelectedAccount] = useState<IPolkadotExtensionAccountForSDK | null>(null)
   const [stakesLeft, setStakesLeft] = useState(0)
@@ -362,6 +364,7 @@ const transformAccount = useCallback(
   // Internal wallet setter logic
   const setWalletInternal = useCallback(
     (w: Wallet | undefined) => {
+      debugger;
       _setWallet(w)
       _setAccounts([])
       _setSelectedAccount(null)
@@ -407,7 +410,14 @@ const transformAccount = useCallback(
         }
         setIsConnecting(true)
         const { getWallets } = await import("@talismn/connect-wallets")
-        const availableWallets = getWallets()
+        const availableWallets = getWallets().filter((w) => {
+          if (w.extensionName !== 'polkadot-js') return true
+
+          const isNova = w.title === 'Nova Wallet'
+
+          return isMobile ? isNova : !isNova
+        })
+
         const savedWallet = availableWallets.find((w) => w.extensionName === savedWalletName)
         if (!savedWallet || !savedWallet.installed) {
           setIsConnecting(false)
