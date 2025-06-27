@@ -52,10 +52,10 @@ export default function BalanceInfo({ activeTab = "stake" }: BalanceInfoProps) {
       ? `${formatNumber(balanceData.stakedBalance.raw, balanceData.stakedBalance.decimals)} ${tokenSymbol}`
       : `0 ${tokenSymbol}`
 
-  const pending = isDataLoading
+  const unstaked = isDataLoading
     ? "..."
-    : balanceData?.lockedBalance
-      ? `${formatNumber(balanceData.lockedBalance.raw, balanceData.lockedBalance.decimals)} ${tokenSymbol}`
+    : balanceData?.unstakedBalance
+      ? `${formatNumber(balanceData.unstakedBalance.raw, balanceData.unstakedBalance.decimals)} ${tokenSymbol}`
       : `0 ${tokenSymbol}`
 
   const available = isDataLoading
@@ -79,7 +79,7 @@ export default function BalanceInfo({ activeTab = "stake" }: BalanceInfoProps) {
               </div>
               <div className={cn("st-flex st-justify-between")}>
                 <span className={cn("st-text-gray-700 dark:st-text-gray-300")}>Pending unstake:</span>
-                <span className={cn("st-font-medium")}>{pending}</span>
+                <span className={cn("st-font-medium")}>{unstaked}</span>
               </div>
               <div className={cn("st-flex st-justify-between")}>
                 <span className={cn("st-text-gray-700 dark:st-text-gray-300")}>Available to stake:</span>
@@ -90,7 +90,7 @@ export default function BalanceInfo({ activeTab = "stake" }: BalanceInfoProps) {
             <>
               <div className={cn("st-flex st-justify-between")}>
                 <span className={cn("st-text-gray-600 dark:st-text-gray-300")}>Pending unstake:</span>
-                <span className={cn("st-font-medium")}>{pending}</span>
+                <span className={cn("st-font-medium")}>{unstaked}</span>
               </div>
               <div className={cn("st-flex st-justify-between")}>
                 <span className={cn("st-text-gray-600 dark:st-text-gray-300")}>Staked volume:</span>
