@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import {useState} from 'react'
 import { useWallet } from "@/context/wallet-context"
 import BalanceInfo from "@/components/balance-info"
 import { cn } from "../lib/utils"
@@ -10,7 +10,7 @@ interface WalletInfoProps {
 }
 
 export default function WalletInfo({ activeTab = "stake" }: WalletInfoProps) {
-  const { walletAddress, accounts, selectAccount, isConnecting } = useWallet()
+  const { selectedAccount, accounts, selectAccount, isConnecting } = useWallet()
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
 
   const handleSelectAccount = async (address: string) => {
@@ -49,7 +49,8 @@ export default function WalletInfo({ activeTab = "stake" }: WalletInfoProps) {
                 )}
             >
             <span className={cn("st-text-gray-500 dark:st-text-gray-200")}>
-              {walletAddress}
+                <span className="st-hidden sm:st-inline">{selectedAccount?.name || selectedAccount?.address}</span>
+                <span className="sm:st-hidden">{selectedAccount?.name || selectedAccount?.addressShort}</span>
             </span>
               <svg
                   className={cn(
