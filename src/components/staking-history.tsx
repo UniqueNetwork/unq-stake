@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { useWallet } from "@/context/wallet-context"
 import {
   fetchStakingHistory,
@@ -24,8 +24,17 @@ export default function StakingHistory() {
   const [transfersLoading, setTransfersLoading] = useState(false)
   const [isRefreshing, setIsRefreshing] = useState(false)
 
-  const stake = stakingTransactions.filter((tx) => tx.eventType === "Stake")
-  const unstake = stakingTransactions.filter((tx) => tx.eventType === "Unstake")
+  const {stake, unstake} = useMemo(() => {
+    const stake = stakingTransactions.filter((tx) => tx.eventType === "Stake")
+    const unstake = stakingTransactions.filter((tx) => tx.eventType === "Unstake")
+
+    return { stake, unstake }
+  }, [stakingTransactions])
+
+  const chain = useMemo(() => {
+    if (tokenSymbol === "QTZ") return "quartz"
+    return "unique"
+  }, [tokenSymbol])
 
   async function fetchStakingData() {
     if (!connected || !walletAddress) return
@@ -181,7 +190,7 @@ export default function StakingHistory() {
                       </div>
                   ) : (
                       <div className={cn("st-overflow-x-auto")}>
-                        <StakingTable stake={stake} />
+                        <StakingTable stake={stake} chain={chain} />
                       </div>
                   )
               ) : activeTab === "unstaking" ? (
@@ -195,7 +204,7 @@ export default function StakingHistory() {
                       </div>
                   ) : (
                       <div className={cn("st-overflow-x-auto")}>
-                        <UnstakingTable unStake={unstake} />
+                        <UnstakingTable unStake={unstake} chain={chain} />
                       </div>
                   )
               ) : transfersLoading ? (
@@ -208,11 +217,11 @@ export default function StakingHistory() {
                   </div>
               ) : activeTab === 'transfers' ? (
                   <div className={cn("st-overflow-x-auto")}>
-                    <TransfersTable transfers={transferTransactions} />
+                    <TransfersTable transfers={transferTransactions} chain={chain} />
                   </div>
               ) : (
                   <div className={cn("st-overflow-x-auto")}>
-                    <StakingRewardsTable stakingRewards={stakingRewards} />
+                    <StakingRewardsTable stakingRewards={stakingRewards} chain={chain} />
                   </div>
               )}
             </div>

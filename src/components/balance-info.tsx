@@ -2,6 +2,7 @@
 
 import {type BalanceDataItem, useWallet} from '@/context/wallet-context'
 import { cn } from "../lib/utils"
+import CustomTooltip from '@/components/custom-tooltip.tsx';
 
 interface BalanceInfoProps {
   activeTab?: "stake" | "unstake"
@@ -9,7 +10,7 @@ interface BalanceInfoProps {
 
 type BalanceSpanProps = {
   className?: string
-  value?: BalanceDataItem
+  value?: Partial<Pick<BalanceDataItem, "raw" | "decimals" | "unit">>
   isLoading?: boolean
   displayDecimals?: number
 }
@@ -17,34 +18,41 @@ type BalanceSpanProps = {
 export const BalanceSpan = (props: BalanceSpanProps) => {
   const {
     className = "st-font-medium",
-    value = {
-        raw: "0",
-        decimals: 18,
-        unit: "",
-    } as BalanceDataItem,
+    value,
     isLoading = false,
     displayDecimals = 4,
   } = props
 
+  const decimals = value?.decimals ?? 18
+  const unit = value?.unit ?? ""
+
   if (isLoading) return <span className={className}>...</span>
 
-  const raw = BigInt(value.raw)
+  const raw = BigInt(value?.raw ?? 0)
   if (raw === 0n) return <span className={className}>0</span>
 
-  const divisor = 10n ** BigInt(value.decimals)
+  const divisor = 10n ** BigInt(decimals)
   const whole = raw / divisor
   const fraction = raw % divisor
-  const padded = fraction.toString().padStart(value.decimals, "0")
+  const padded = fraction.toString().padStart(decimals, "0")
   const displayFraction = padded.slice(0, displayDecimals)
 
   const isNegligible = whole === 0n && displayFraction.split("").every((d) => d === "0")
-  if (isNegligible) return (<span className={className}>0</span>)
+  if (isNegligible) {
+    const fullValue = `${whole.toString()}.${padded}`.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
+
+    return (<CustomTooltip text={fullValue} position="left">
+      <span className={className}>≈ 0</span>
+    </CustomTooltip>)
+  }
+
+  const wholeFormatted = whole.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
 
   return (
-      <span className={cn("st-inline-flex st-items-baseline", className)}>
-      <span>{whole.toString()}</span>
-      <span className="st-ml-0.5 st-text-xs st-opacity-50">.{displayFraction}</span>
-      <span className="st-ml-1">{value.unit}</span>
+    <span className={cn("st-inline-flex st-items-baseline", className)}>
+      <span>{wholeFormatted}</span>
+      <span>.{displayFraction}</span>
+      <span className="st-ml-1">{unit}</span>
     </span>
   )
 }

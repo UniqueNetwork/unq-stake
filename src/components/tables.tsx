@@ -1,10 +1,11 @@
 import {cn} from '@/lib/utils.ts';
 import React from 'react';
 import {
-    type BalanceTransferItem, formatAmount, formatDate, formatHash, mapTransferHistoryToCsv, mapStakingHistoryItemsToCsv, type StakingHistoryItem,
+    type BalanceTransferItem, formatDate, formatHash, mapTransferHistoryToCsv, mapStakingHistoryItemsToCsv, type StakingHistoryItem,
 } from '@/utils/staking-api.ts';
 import {Pagination, usePagination} from '@/components/pagination.tsx';
 import {DownloadCsv} from '@/components/download-csv.tsx';
+import {BalanceSpan} from '@/components/balance-info.tsx';
 
 const TableHeader: React.FC<{ children: React.ReactNode, align?: string }> = ({children, align = 'left'}) => {
     const _alignClass = align === 'right' ? 'st-text-right' : 'st-text-left';
@@ -24,7 +25,7 @@ const SuccessBadge: React.FC = () => (<td className={cn('st-px-6', 'st-py-4')}>
 
 const AmountCell: React.FC<{ amount: string | bigint }> = ({amount}) => (
     <td className={cn('st-px-6', 'st-py-4', 'st-text-right', 'st-font-mono', 'st-text-sm', 'st-text-gray-900', 'dark:st-text-gray-100')}>
-        {formatAmount(amount)}
+        <BalanceSpan value={{raw: amount.toString(), decimals: 18}} />
     </td>
 )
 
@@ -48,18 +49,30 @@ const BlockNumberCell: React.FC<{ blockNumber: number }> = ({blockNumber}) => (
     </td>
 )
 
-const ExtrinsicHashCell: React.FC<{ extrinsicHash: string }> = ({extrinsicHash}) => (
-    <td className={cn('st-px-6', 'st-py-4', 'st-whitespace-nowrap', 'st-text-sm', 'st-font-mono')}>
+type Chain = 'unique' | 'quartz';
+
+type LinkCellProps = {
+    extrinsicHash: string,
+    blockNumber: number
+    chain: Chain
+}
+
+const LinkCell: React.FC<LinkCellProps> = ({extrinsicHash, blockNumber, chain}) => {
+    const url = chain === 'unique'
+        ? `https://unique.subscan.io/extrinsic/${extrinsicHash}?tab=event`
+        : `https://polkadot.js.org/apps/?rpc=wss://ws-quartz.unique.network#/explorer/query/${blockNumber}`;
+
+    return (<td className={cn('st-px-6', 'st-py-4', 'st-whitespace-nowrap', 'st-text-sm', 'st-font-mono')}>
         <a
-            href={`https://unique.subscan.io/extrinsic/${extrinsicHash}?tab=event`}
+            href={url}
             target="_blank"
             rel="noopener noreferrer"
             className={cn('st-text-blue-600', 'st-hover:text-blue-800', 'st-hover:underline')}
         >
             {formatHash(extrinsicHash)}
         </a>
-    </td>
-)
+    </td>)
+}
 
 const DirectionCell: React.FC<{ direction: 'in' | 'out' }> = ({direction}) => (
     <td className={cn('st-px-6', 'st-py-4', 'st-text-right', 'st-font-mono', 'st-text-sm', 'st-text-gray-900', 'dark:st-text-gray-100')}>
@@ -68,7 +81,7 @@ const DirectionCell: React.FC<{ direction: 'in' | 'out' }> = ({direction}) => (
     </td>
 )
 
-export const StakingTable: React.FC<{ stake: StakingHistoryItem[] }> = ({stake}) => {
+export const StakingTable: React.FC<{ stake: StakingHistoryItem[], chain: Chain }> = ({stake, chain}) => {
     const {
         page, setPage, pageSize, setPageSize, totalPages, currentPageData,
     } = usePagination(stake, 10);
@@ -90,7 +103,7 @@ export const StakingTable: React.FC<{ stake: StakingHistoryItem[] }> = ({stake})
             {currentPageData.map((item, index) => (
                 <tr key={index} className={cn('st-hover:bg-gray-50', 'dark:st-hover:bg-gray-700')}>
                     <BlockNumberCell blockNumber={item.blockNumber} />
-                    <ExtrinsicHashCell extrinsicHash={item.hash} />
+                    <LinkCell extrinsicHash={item.hash} blockNumber={item.blockNumber} chain={chain} />
                     <TimestampCell timestamp={item.blockTimestamp} />
                     <SuccessBadge />
                     <SectionMethodCell item={item} />
@@ -113,7 +126,7 @@ export const StakingTable: React.FC<{ stake: StakingHistoryItem[] }> = ({stake})
     </>)
 }
 
-export const UnstakingTable: React.FC<{ unStake: StakingHistoryItem[] }> = ({unStake}) => {
+export const UnstakingTable: React.FC<{ unStake: StakingHistoryItem[], chain: Chain }> = ({unStake, chain}) => {
     const {
         page, setPage, pageSize, setPageSize, totalPages, currentPageData,
     } = usePagination(unStake, 10);
@@ -135,7 +148,7 @@ export const UnstakingTable: React.FC<{ unStake: StakingHistoryItem[] }> = ({unS
             {currentPageData.map((item, index) => (
                 <tr key={index} className={cn('st-hover:bg-gray-50', 'dark:st-hover:bg-gray-700')}>
                     <BlockNumberCell blockNumber={item.blockNumber} />
-                    <ExtrinsicHashCell extrinsicHash={item.hash} />
+                    <LinkCell extrinsicHash={item.hash} blockNumber={item.blockNumber} chain={chain} />
                     <TimestampCell timestamp={item.blockTimestamp} />
                     <SuccessBadge />
                     <SectionMethodCell item={item} />
@@ -159,7 +172,7 @@ export const UnstakingTable: React.FC<{ unStake: StakingHistoryItem[] }> = ({unS
     </>)
 }
 
-export const TransfersTable: React.FC<{ transfers: BalanceTransferItem[] }> = ({transfers}) => {
+export const TransfersTable: React.FC<{ transfers: BalanceTransferItem[], chain: Chain }> = ({transfers, chain}) => {
     const {
         page, setPage, pageSize, setPageSize, totalPages, currentPageData,
     } = usePagination(transfers, 10);
@@ -174,20 +187,20 @@ export const TransfersTable: React.FC<{ transfers: BalanceTransferItem[] }> = ({
                 <TableHeader>Time</TableHeader>
                 <TableHeader>Status</TableHeader>
                 <TableHeader>Method</TableHeader>
-                <TableHeader align="right">Amount</TableHeader>
                 <TableHeader>Direction</TableHeader>
+                <TableHeader align="right">Amount</TableHeader>
             </tr>
             </thead>
             <tbody className={cn('st-divide-y', 'st-divide-gray-200', 'dark:st-divide-gray-700')}>
             {currentPageData.map((item, index) => (
                 <tr key={index} className={cn('st-hover:bg-gray-50', 'dark:st-hover:bg-gray-700')}>
                     <BlockNumberCell blockNumber={item.blockNumber} />
-                    <ExtrinsicHashCell extrinsicHash={item.extrinsicHash} />
+                    <LinkCell extrinsicHash={item.extrinsicHash} blockNumber={item.blockNumber} chain={chain} />
                     <TimestampCell timestamp={item.blockTimestamp} />
                     <SuccessBadge />
                     <SectionMethodCell item={item} />
-                    <AmountCell amount={item.amount} />
                     <DirectionCell direction={item.direction} />
+                    <AmountCell amount={item.amount} />
                 </tr>))}
             </tbody>
         </table>
@@ -206,7 +219,7 @@ export const TransfersTable: React.FC<{ transfers: BalanceTransferItem[] }> = ({
     </>)
 }
 
-export const StakingRewardsTable: React.FC<{ stakingRewards: BalanceTransferItem[] }> = ({stakingRewards}) => {
+export const StakingRewardsTable: React.FC<{ stakingRewards: BalanceTransferItem[], chain: Chain }> = ({stakingRewards, chain}) => {
     const {
         page, setPage, pageSize, setPageSize, totalPages, currentPageData,
     } = usePagination(stakingRewards, 10);
@@ -228,7 +241,7 @@ export const StakingRewardsTable: React.FC<{ stakingRewards: BalanceTransferItem
             {currentPageData.map((item, index) => (
                 <tr key={index} className={cn('st-hover:bg-gray-50', 'dark:st-hover:bg-gray-700')}>
                     <BlockNumberCell blockNumber={item.blockNumber} />
-                    <ExtrinsicHashCell extrinsicHash={item.extrinsicHash} />
+                    <LinkCell extrinsicHash={item.extrinsicHash} blockNumber={item.blockNumber} chain={chain} />
                     <TimestampCell timestamp={item.blockTimestamp} />
                     <SuccessBadge />
                     <SectionMethodCell item={item} />
