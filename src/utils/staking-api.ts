@@ -192,3 +192,35 @@ export function formatAmount(amount: string | bigint): string {
     return "0"
   }
 }
+
+export function mapStakingHistoryItemsToCsv (items: StakingHistoryItem[]): string[][] {
+    const headers = ['Block Number', 'Hash', 'Date', 'Section', 'Method', 'Amount', 'Event Type']
+
+    const rows = items.map(item => [
+        item.blockNumber.toString(),
+        item.hash,
+        formatDate(item.blockTimestamp),
+        item.section,
+        item.method,
+        formatAmount(item.amount),
+        item.eventType,
+    ])
+
+    return [headers, ...rows]
+}
+
+export function mapTransferHistoryToCsv(transfers: BalanceTransferItem[]): string[][] {
+    const headers = ['Block Number', 'Extrinsic Hash', 'Date', 'Amount', 'Direction', 'Section', 'Method']
+
+    const rows = transfers.map(item => [
+        item.blockNumber.toString(),
+        item.extrinsicHash,
+        formatDate(item.blockTimestamp),
+        formatAmount(item.amount),
+        item.direction,
+        item.section,
+        item.method,
+    ])
+
+  return [headers, ...rows]
+}

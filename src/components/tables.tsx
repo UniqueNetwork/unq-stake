@@ -1,9 +1,10 @@
 import {cn} from '@/lib/utils.ts';
 import React from 'react';
 import {
-    type BalanceTransferItem, formatAmount, formatDate, formatHash, type StakingHistoryItem
+    type BalanceTransferItem, formatAmount, formatDate, formatHash, mapTransferHistoryToCsv, mapStakingHistoryItemsToCsv, type StakingHistoryItem,
 } from '@/utils/staking-api.ts';
 import {Pagination, usePagination} from '@/components/pagination.tsx';
+import {DownloadCsv} from '@/components/download-csv.tsx';
 
 const TableHeader: React.FC<{ children: React.ReactNode, align?: string }> = ({children, align = 'left'}) => {
     const _alignClass = align === 'right' ? 'st-text-right' : 'st-text-left';
@@ -104,6 +105,11 @@ export const StakingTable: React.FC<{ stake: StakingHistoryItem[] }> = ({stake})
             pageSize={pageSize}
             onPageSizeChange={setPageSize}
         />
+        <DownloadCsv
+            data={stake}
+            mapToRows={mapStakingHistoryItemsToCsv}
+            filename="staking-history.csv"
+        />
     </>)
 }
 
@@ -144,6 +150,11 @@ export const UnstakingTable: React.FC<{ unStake: StakingHistoryItem[] }> = ({unS
             onPageChange={setPage}
             pageSize={pageSize}
             onPageSizeChange={setPageSize}
+        />
+        <DownloadCsv
+            data={unStake}
+            mapToRows={mapStakingHistoryItemsToCsv}
+            filename="unstaking-history.csv"
         />
     </>)
 }
@@ -187,6 +198,11 @@ export const TransfersTable: React.FC<{ transfers: BalanceTransferItem[] }> = ({
             pageSize={pageSize}
             onPageSizeChange={setPageSize}
         />
+        <DownloadCsv
+            data={transfers}
+            mapToRows={mapTransferHistoryToCsv}
+            filename="transfer-history.csv"
+        />
     </>)
 }
 
@@ -226,6 +242,11 @@ export const StakingRewardsTable: React.FC<{ stakingRewards: BalanceTransferItem
             onPageChange={setPage}
             pageSize={pageSize}
             onPageSizeChange={setPageSize}
+        />
+        <DownloadCsv
+            data={stakingRewards}
+            mapToRows={mapTransferHistoryToCsv}
+            filename="staking-rewards-history.csv"
         />
     </>)
 }
