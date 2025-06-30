@@ -6,9 +6,9 @@ type EventsPageItems = Awaited<ReturnType<UniqueIndexerInstance["events"]>>["ite
 export interface StakingHistoryItem {
   hash: string
   blockNumber: number
+  blockTimestamp: Date
   section: string
   method: string
-  createdAt: string
   amount: string
   eventType: "Stake" | "Unstake"
 }
@@ -25,7 +25,7 @@ export async function fetchStakingHistory(address: string, tokenSymbol = "UNQ"):
       sectionIn: ["appPromotion"],
     })
 
-    return extrinsics.items.map((item) => {
+    const result = extrinsics.items.map((item) => {
       const m = item.method.toLowerCase()
       const eventType: "Stake" | "Unstake" = m.startsWith("unstake") ? "Unstake" : "Stake"
 
@@ -47,13 +47,17 @@ export async function fetchStakingHistory(address: string, tokenSymbol = "UNQ"):
       return {
         hash: item.hash,
         blockNumber: item.blockNumber,
+        blockTimestamp: new Date(item.blockTimestamp),
         section: item.section,
         method: item.method,
-        createdAt: new Date(item.createdAt).toISOString(),
         amount: amount,
         eventType,
       }
     })
+
+    result.sort((a, b) => b.blockNumber - a.blockNumber)
+
+    return result
   } catch (error) {
     console.error("Error fetching staking history:", error)
     return []
@@ -62,7 +66,7 @@ export async function fetchStakingHistory(address: string, tokenSymbol = "UNQ"):
 
 export type BalanceTransferItem = {
     blockNumber: number
-    blockTimestamp: string
+    blockTimestamp: Date
     amount: bigint
     extrinsicHash: string
     direction: "in" | "out"
@@ -108,7 +112,7 @@ export async function fetchTransferHistory(address: string, tokenSymbol = "UNQ")
         if (amount > 0) {
           rewards.set(item.blockNumber.toString(), {
             blockNumber: item.blockNumber,
-            blockTimestamp: new Date(item.createdAt).toISOString(),
+            blockTimestamp: new Date(item.blockTimestamp),
             amount,
             extrinsicHash: item.extrinsicHash,
             direction: "in",
@@ -134,9 +138,10 @@ export async function fetchTransferHistory(address: string, tokenSymbol = "UNQ")
         const to = item.data?.["to"]?.toString() || ""
         const direction = to && Address.is.substrateAddress(to) && Address.compare.substrateAddresses(to, address) ? "in" : "out"
 
+        // debugger;
         result.transfers.push({
           blockNumber: item.blockNumber,
-          blockTimestamp: new Date(item.createdAt).toISOString(),
+          blockTimestamp: new Date(item.blockTimestamp),
           amount,
           extrinsicHash: item.extrinsicHash,
           direction,
@@ -157,9 +162,9 @@ export async function fetchTransferHistory(address: string, tokenSymbol = "UNQ")
   return result
 }
 
-export function formatDate(dateString: string): string {
-  const date = new Date(dateString)
-  return date.toLocaleString("en-US", {
+export function formatDate(date: string | Date): string {
+  const _date = typeof date === "string" ? new Date(date) : date
+  return _date.toLocaleString("en-US", {
     year: "numeric",
     month: "short",
     day: "numeric",

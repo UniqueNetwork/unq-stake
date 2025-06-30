@@ -223,7 +223,7 @@ export default function StakingHistory() {
                                   </a>
                                 </td>
                                 <td className={cn("st-px-6", "st-py-4", "st-whitespace-nowrap", "st-text-sm", "st-text-gray-600", "dark:st-text-gray-400")}>
-                                  {formatDate(tx.createdAt)}
+                                  {formatDate(tx.blockTimestamp)}
                                 </td>
                                 <td className={cn("st-px-6", "st-py-4")}>
                           <span className={cn("st-inline-flex", "st-items-center", "st-rounded-full", "st-bg-green-50", "st-px-2", "st-py-1", "st-text-xs", "st-font-medium", "st-text-green-700", "dark:st-bg-green-800", "dark:st-text-green-100")}>
@@ -295,7 +295,7 @@ export default function StakingHistory() {
                                   </a>
                                 </td>
                                 <td className={cn("st-px-6", "st-py-4", "st-whitespace-nowrap", "st-text-sm", "st-text-gray-600", "dark:st-text-gray-400")}>
-                                  {formatDate(tx.createdAt)}
+                                  {formatDate(tx.blockTimestamp)}
                                 </td>
                                 <td className={cn("st-px-6", "st-py-4")}>
                           <span className={cn("st-inline-flex", "st-items-center", "st-rounded-full", "st-bg-green-50", "st-px-2", "st-py-1", "st-text-xs", "st-font-medium", "st-text-green-700", "dark:st-bg-green-800", "dark:st-text-green-100")}>
