@@ -38,7 +38,7 @@ export function DownloadCsv<T>({
     return (
         <button
             onClick={handleDownload}
-            className="st-text-sm st-text-blue-600 hover:st-underline"
+            className="text-sm text-blue-600 hover:underline"
         >
             {children}
         </button>

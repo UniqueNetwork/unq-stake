@@ -1,4 +1,3 @@
-import {cn} from '@/lib/utils.ts';
 import React from 'react';
 import {
     type BalanceTransferItem, formatDate, formatHash, mapTransferHistoryToCsv, mapStakingHistoryItemsToCsv, type StakingHistoryItem,
@@ -8,43 +7,43 @@ import {DownloadCsv} from '@/components/download-csv.tsx';
 import {BalanceSpan} from '@/components/balance-info.tsx';
 
 const TableHeader: React.FC<{ children: React.ReactNode, align?: string }> = ({children, align = 'left'}) => {
-    const _alignClass = align === 'right' ? 'st-text-right' : 'st-text-left';
+    const alignClass = align === 'right' ? 'text-right' : 'text-left';
 
     return (
-        <th className={cn('st-px-6', 'st-py-3', _alignClass, 'st-text-xs', 'st-font-medium', 'st-text-gray-500', 'dark:st-text-gray-300', 'st-uppercase', 'st-tracking-wider')}>
+        <th className={`px-6 py-3 ${alignClass} text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider`}>
             {children}
         </th>)
 }
 
-const SuccessBadge: React.FC = () => (<td className={cn('st-px-6', 'st-py-4')}>
+const SuccessBadge: React.FC = () => (<td className="px-6 py-4">
     <span
-        className={cn('st-inline-flex', 'st-items-center', 'st-rounded-full', 'st-bg-green-50', 'st-px-2', 'st-py-1', 'st-text-xs', 'st-font-medium', 'st-text-green-700', 'dark:st-bg-green-800', 'dark:st-text-green-100')}>
+        className="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 dark:bg-green-800 dark:text-green-100">
       Success
     </span>
 </td>)
 
 const AmountCell: React.FC<{ amount: string | bigint }> = ({amount}) => (
-    <td className={cn('st-px-6', 'st-py-4', 'st-text-right', 'st-font-mono', 'st-text-sm', 'st-text-gray-900', 'dark:st-text-gray-100')}>
+    <td className="px-6 py-4 text-right font-mono text-sm text-gray-900 dark:text-gray-100">
         <BalanceSpan value={{raw: amount.toString(), decimals: 18}} />
     </td>
 )
 
 const SectionMethodCell: React.FC<{item: { section: string, method: string }}> = ({item :{section, method}}) => (
-    <td className={cn('st-px-6', 'st-py-4')}>
-        <span className={cn('st-text-sm', 'st-text-gray-700', 'dark:st-text-gray-300')}>
+    <td className="px-6 py-4">
+        <span className="text-sm text-gray-700 dark:text-gray-300">
           {section} ({method})
         </span>
     </td>
 )
 
 const TimestampCell: React.FC<{ timestamp: string | Date }> = ({timestamp}) => (
-    <td className={cn('st-px-6', 'st-py-4', 'st-whitespace-nowrap', 'st-text-sm', 'st-text-gray-600', 'dark:st-text-gray-400')}>
+    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">
         {formatDate(timestamp)}
     </td>
 )
 
 const BlockNumberCell: React.FC<{ blockNumber: number }> = ({blockNumber}) => (
-    <td className={cn('st-px-6', 'st-py-4', 'st-whitespace-nowrap', 'st-text-sm', 'st-font-medium', 'st-text-gray-900', 'dark:st-text-gray-100')}>
+    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
         {blockNumber}
     </td>
 )
@@ -62,12 +61,12 @@ const LinkCell: React.FC<LinkCellProps> = ({extrinsicHash, blockNumber, chain}) 
         ? `https://unique.subscan.io/extrinsic/${extrinsicHash}?tab=event`
         : `https://polkadot.js.org/apps/?rpc=wss://ws-quartz.unique.network#/explorer/query/${blockNumber}`;
 
-    return (<td className={cn('st-px-6', 'st-py-4', 'st-whitespace-nowrap', 'st-text-sm', 'st-font-mono')}>
+    return (<td className="px-6 py-4 whitespace-nowrap text-sm font-mono">
         <a
             href={url}
             target="_blank"
             rel="noopener noreferrer"
-            className={cn('st-text-blue-600', 'st-hover:text-blue-800', 'st-hover:underline')}
+            className="text-blue-600 hover:text-blue-800 hover:underline"
         >
             {formatHash(extrinsicHash)}
         </a>
@@ -75,9 +74,9 @@ const LinkCell: React.FC<LinkCellProps> = ({extrinsicHash, blockNumber, chain}) 
 }
 
 const DirectionCell: React.FC<{ direction: 'in' | 'out' }> = ({direction}) => (
-    <td className={cn('st-px-6', 'st-py-4', 'st-text-right', 'st-font-mono', 'st-text-sm', 'st-text-gray-900', 'dark:st-text-gray-100')}>
-        {direction === 'in' ? (<span className={cn('st-text-green-500')}>Incoming</span>) : (
-            <span className={cn('st-text-red-500')}>Outgoing</span>)}
+    <td className="px-6 py-4 text-right font-mono text-sm text-gray-900 dark:text-gray-100">
+        {direction === 'in' ? (<span className="text-green-500">Incoming</span>) : (
+            <span className="text-red-500">Outgoing</span>)}
     </td>
 )
 
@@ -88,8 +87,8 @@ export const StakingTable: React.FC<{ stake: StakingHistoryItem[], chain: Chain 
 
     return (<>
         <table
-            className={cn('st-min-w-full', 'st-bg-white', 'dark:st-bg-gray-800', 'st-rounded-lg', 'st-overflow-hidden')}>
-            <thead className={cn('st-bg-gray-50', 'dark:st-bg-gray-700')}>
+            className="min-w-full bg-white dark:bg-gray-800 rounded-lg overflow-hidden">
+            <thead className="bg-gray-50 dark:bg-gray-700">
             <tr>
                 <TableHeader>Block</TableHeader>
                 <TableHeader>Hash</TableHeader>
@@ -99,9 +98,9 @@ export const StakingTable: React.FC<{ stake: StakingHistoryItem[], chain: Chain 
                 <TableHeader align="right">Amount</TableHeader>
             </tr>
             </thead>
-            <tbody className={cn('st-divide-y', 'st-divide-gray-200', 'dark:st-divide-gray-700')}>
+            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
             {currentPageData.map((item, index) => (
-                <tr key={index} className={cn('st-hover:bg-gray-50', 'dark:st-hover:bg-gray-700')}>
+                <tr key={index} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                     <BlockNumberCell blockNumber={item.blockNumber} />
                     <LinkCell extrinsicHash={item.hash} blockNumber={item.blockNumber} chain={chain} />
                     <TimestampCell timestamp={item.blockTimestamp} />
@@ -133,8 +132,8 @@ export const UnstakingTable: React.FC<{ unStake: StakingHistoryItem[], chain: Ch
 
     return (<>
         <table
-            className={cn('st-min-w-full', 'st-bg-white', 'dark:st-bg-gray-800', 'st-rounded-lg', 'st-overflow-hidden')}>
-            <thead className={cn('st-bg-gray-50', 'dark:st-bg-gray-700')}>
+            className="min-w-full bg-white dark:bg-gray-800 rounded-lg overflow-hidden">
+            <thead className="bg-gray-50 dark:bg-gray-700">
             <tr>
                 <TableHeader>Block</TableHeader>
                 <TableHeader>Hash</TableHeader>
@@ -144,9 +143,9 @@ export const UnstakingTable: React.FC<{ unStake: StakingHistoryItem[], chain: Ch
                 <TableHeader align="right">Amount</TableHeader>
             </tr>
             </thead>
-            <tbody className={cn('st-divide-y', 'st-divide-gray-200', 'dark:st-divide-gray-700')}>
+            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
             {currentPageData.map((item, index) => (
-                <tr key={index} className={cn('st-hover:bg-gray-50', 'dark:st-hover:bg-gray-700')}>
+                <tr key={index} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                     <BlockNumberCell blockNumber={item.blockNumber} />
                     <LinkCell extrinsicHash={item.hash} blockNumber={item.blockNumber} chain={chain} />
                     <TimestampCell timestamp={item.blockTimestamp} />
@@ -179,8 +178,8 @@ export const TransfersTable: React.FC<{ transfers: BalanceTransferItem[], chain:
 
     return (<>
         <table
-            className={cn('st-min-w-full', 'st-bg-white', 'dark:st-bg-gray-800', 'st-rounded-lg', 'st-overflow-hidden')}>
-            <thead className={cn('st-bg-gray-50', 'dark:st-bg-gray-700')}>
+            className="min-w-full bg-white dark:bg-gray-800 rounded-lg overflow-hidden">
+            <thead className="bg-gray-50 dark:bg-gray-700">
             <tr>
                 <TableHeader>Block</TableHeader>
                 <TableHeader>Hash</TableHeader>
@@ -191,9 +190,9 @@ export const TransfersTable: React.FC<{ transfers: BalanceTransferItem[], chain:
                 <TableHeader align="right">Amount</TableHeader>
             </tr>
             </thead>
-            <tbody className={cn('st-divide-y', 'st-divide-gray-200', 'dark:st-divide-gray-700')}>
+            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
             {currentPageData.map((item, index) => (
-                <tr key={index} className={cn('st-hover:bg-gray-50', 'dark:st-hover:bg-gray-700')}>
+                <tr key={index} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                     <BlockNumberCell blockNumber={item.blockNumber} />
                     <LinkCell extrinsicHash={item.extrinsicHash} blockNumber={item.blockNumber} chain={chain} />
                     <TimestampCell timestamp={item.blockTimestamp} />
@@ -226,8 +225,8 @@ export const StakingRewardsTable: React.FC<{ stakingRewards: BalanceTransferItem
 
     return (<>
         <table
-            className={cn('st-min-w-full', 'st-bg-white', 'dark:st-bg-gray-800', 'st-rounded-lg', 'st-overflow-hidden')}>
-            <thead className={cn('st-bg-gray-50', 'dark:st-bg-gray-700')}>
+            className="min-w-full bg-white dark:bg-gray-800 rounded-lg overflow-hidden">
+            <thead className="bg-gray-50 dark:bg-gray-700">
             <tr>
                 <TableHeader>Block</TableHeader>
                 <TableHeader>Hash</TableHeader>
@@ -237,9 +236,9 @@ export const StakingRewardsTable: React.FC<{ stakingRewards: BalanceTransferItem
                 <TableHeader align="right">Amount</TableHeader>
             </tr>
             </thead>
-            <tbody className={cn('st-divide-y', 'st-divide-gray-200', 'dark:st-divide-gray-700')}>
+            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
             {currentPageData.map((item, index) => (
-                <tr key={index} className={cn('st-hover:bg-gray-50', 'dark:st-hover:bg-gray-700')}>
+                <tr key={index} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                     <BlockNumberCell blockNumber={item.blockNumber} />
                     <LinkCell extrinsicHash={item.extrinsicHash} blockNumber={item.blockNumber} chain={chain} />
                     <TimestampCell timestamp={item.blockTimestamp} />

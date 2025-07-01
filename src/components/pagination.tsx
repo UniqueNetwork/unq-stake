@@ -67,17 +67,17 @@ export const Pagination: React.FC<PaginationProps> = (pros) => {
 
         return pages.map((page, idx) =>
                 page === 'dots' ? (
-                    <span key={`dots-${idx}`} className="st-px-2 st-text-gray-400">
+                    <span key={`dots-${idx}`} className="px-2 text-gray-400">
           ...
         </span>
                 ) : (
                     <button
                         key={page}
                         onClick={() => goToPage(page)}
-                        className={`st-px-3 st-py-1 st-text-sm st-rounded ${
+                        className={`px-3 py-1 text-sm rounded ${
                             page === currentPage
-                                ? 'st-bg-blue-600 st-text-white'
-                                : 'st-bg-gray-100 dark:st-bg-gray-700 st-text-gray-700 dark:st-text-gray-300 hover:st-bg-gray-200 dark:hover:st-bg-gray-600'
+                                ? 'bg-blue-600 text-white'
+                                : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                         }`}
                     >
                         {page}
@@ -87,13 +87,13 @@ export const Pagination: React.FC<PaginationProps> = (pros) => {
     };
 
     return (
-        <div className="st-flex st-items-center st-justify-between st-mt-4 st-gap-4 st-flex-wrap">
-            <div className="st-flex st-items-center st-gap-2">
-                <span className="st-text-sm st-text-gray-600 dark:st-text-gray-300">Rows per page:</span>
+        <div className="flex items-center justify-between mt-4 gap-4 flex-wrap">
+            <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-600 dark:text-gray-300">Rows per page:</span>
                 <select
                     value={pageSize}
                     onChange={(e) => onPageSizeChange(Number(e.target.value))}
-                    className="st-text-sm st-border st-rounded st-px-2 st-py-1 dark:st-bg-gray-800 dark:st-border-gray-700 dark:st-text-gray-200"
+                    className="text-sm border rounded px-2 py-1 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200"
                 >
                     {[10, 25, 50].map((size) => (
                         <option key={size} value={size}>
@@ -103,11 +103,11 @@ export const Pagination: React.FC<PaginationProps> = (pros) => {
                 </select>
             </div>
 
-            <div className="st-flex st-items-center st-gap-2">
+            <div className="flex items-center gap-2">
                 <button
                     onClick={() => goToPage(currentPage - 1)}
                     disabled={currentPage === 1}
-                    className="st-px-2 st-py-1 st-text-sm st-rounded st-text-blue-600 disabled:st-opacity-50"
+                    className="px-2 py-1 text-sm rounded text-blue-600 disabled:opacity-50"
                 >
                     ← Prev
                 </button>
@@ -117,7 +117,7 @@ export const Pagination: React.FC<PaginationProps> = (pros) => {
                 <button
                     onClick={() => goToPage(currentPage + 1)}
                     disabled={currentPage === totalPages}
-                    className="st-px-2 st-py-1 st-text-sm st-rounded st-text-blue-600 disabled:st-opacity-50"
+                    className="px-2 py-1 text-sm rounded text-blue-600 disabled:opacity-50"
                 >
                     Next →
                 </button>

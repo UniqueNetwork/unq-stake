@@ -13,17 +13,17 @@ export default function Header() {
   }
 
   return (
-      <header className={cn("st-sticky st-top-0 st-shadow-sm st-bg-white dark:st-bg-gray-900")}>
-        <div className={cn("st-max-w-7xl st-mx-auto st-px-4 sm:st-px-6 lg:st-px-8")}>
-          <div className={cn("st-flex st-justify-end st-h-16 st-items-center space-x-4")}>
+      <header className={"sticky top-0 shadow-sm bg-white dark:bg-gray-900"}>
+        <div className={"max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"}>
+          <div className={"flex justify-end h-16 items-center space-x-4"}>
             <button
                 onClick={toggleTheme}
-                className={cn("st-p-2 st-rounded-md hover:st-bg-gray-100 dark:hover:st-bg-gray-800 transition")}
+                className={"p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition"}
             >
               {resolvedTheme === "dark" ? (
-                  <Sun className="st-w-5 st-h-5" />
+                  <Sun className="w-5 h-5" />
               ) : (
-                  <Moon className="st-w-5 st-h-5" />
+                  <Moon className="w-5 h-5" />
               )}
             </button>
           </div>

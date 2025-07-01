@@ -1,3 +1,4 @@
+import "./index.css";                // ваш глобальный CSS
 import { ThemeProvider } from "@/components/theme-provider";
 import StakingPageClient from "@/components/StakingPageClient";
 import { WalletProvider } from "@/context/wallet-context";
@@ -12,6 +13,7 @@ export default function App() {
       storageKey="stakefin-theme"
     >
       <WalletProvider>
+        <div id="portal-root"></div>
         <StakingPageClient />
       </WalletProvider>
     </ThemeProvider>

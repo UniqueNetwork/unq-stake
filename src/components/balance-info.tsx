@@ -1,7 +1,6 @@
 "use client"
 
 import {type BalanceDataItem, useWallet} from '@/context/wallet-context'
-import { cn } from "../lib/utils"
 import CustomTooltip from '@/components/custom-tooltip.tsx';
 
 interface BalanceInfoProps {
@@ -17,7 +16,7 @@ type BalanceSpanProps = {
 
 export const BalanceSpan = (props: BalanceSpanProps) => {
   const {
-    className = "st-font-medium",
+    className = "font-medium",
     value,
     isLoading = false,
     displayDecimals = 4,
@@ -49,10 +48,10 @@ export const BalanceSpan = (props: BalanceSpanProps) => {
   const wholeFormatted = whole.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
 
   return (
-    <span className={cn("st-inline-flex st-items-baseline", className)}>
+    <span className={`inline-flex items-baseline ${className}`}>
       <span>{wholeFormatted}</span>
       <span>.{displayFraction}</span>
-      <span className="st-ml-1">{unit}</span>
+      <span className="ml-1">{unit}</span>
     </span>
   )
 }
@@ -65,35 +64,35 @@ export default function BalanceInfo({ activeTab = "stake" }: BalanceInfoProps) {
   const isDataLoading = isLoading || !balanceData
 
   return (
-      <div className={cn("st-space-y-2")}>
-        <div className={cn("st-flex st-justify-between")}>
-          <span className={cn("st-text-gray-700 dark:st-text-gray-300")}>Total balance:</span>
+      <div className="space-y-2">
+        <div className="flex justify-between">
+          <span className="text-gray-700 dark:text-gray-300">Total balance:</span>
           <BalanceSpan value={balanceData?.totalBalance} isLoading={isDataLoading} />
         </div>
 
         {activeTab === "stake" ? (
             <>
-              <div className={cn("st-flex st-justify-between")}>
-                <span className={cn("st-text-gray-700 dark:st-text-gray-300")}>Staked volume:</span>
+              <div className="flex justify-between">
+                <span className="text-gray-700 dark:text-gray-300">Staked volume:</span>
                 <BalanceSpan value={balanceData?.stakedBalance} isLoading={isDataLoading} />
               </div>
-              <div className={cn("st-flex st-justify-between")}>
-                <span className={cn("st-text-gray-700 dark:st-text-gray-300")}>Pending unstake:</span>
+              <div className="flex justify-between">
+                <span className="text-gray-700 dark:text-gray-300">Pending unstake:</span>
                 <BalanceSpan value={balanceData?.unstakedBalance} isLoading={isDataLoading} />
               </div>
-              <div className={cn("st-flex st-justify-between")}>
-                <span className={cn("st-text-gray-700 dark:st-text-gray-300")}>Available to stake:</span>
+              <div className="flex justify-between">
+                <span className="text-gray-700 dark:text-gray-300">Available to stake:</span>
                 <BalanceSpan value={balanceData?.availableBalance} isLoading={isDataLoading} />
               </div>
             </>
         ) : (
             <>
-              <div className={cn("st-flex st-justify-between")}>
-                <span className={cn("st-text-gray-600 dark:st-text-gray-300")}>Pending unstake:</span>
+              <div className="flex justify-between">
+                <span className="text-gray-600 dark:text-gray-300">Pending unstake:</span>
                 <BalanceSpan value={balanceData?.unstakedBalance} isLoading={isDataLoading} />
               </div>
-              <div className={cn("st-flex st-justify-between")}>
-                <span className={cn("st-text-gray-600 dark:st-text-gray-300")}>Staked volume:</span>
+              <div className="flex justify-between">
+                <span className="text-gray-600 dark:text-gray-300">Staked volume:</span>
                 <BalanceSpan value={balanceData?.stakedBalance} isLoading={isDataLoading} />
               </div>
             </>

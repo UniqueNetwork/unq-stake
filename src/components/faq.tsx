@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import { cn } from "../lib/utils"
 
 interface FAQItem {
   id: string
@@ -62,70 +61,42 @@ export default function FAQ() {
   }
 
   return (
-      <section id="FAQ" className={cn("st-py-16 st-bg-gray-50 dark:st-bg-gray-900")}>
-        <div className={cn("st-container st-mx-auto st-px-4")}>
-          <header className={cn("st-mb-12 st-text-center")}>
-            <h2 className={cn("st-text-3xl st-font-bold")}>FAQ</h2>
-          </header>
+    <section className="py-16 bg-gray-100 dark:bg-gray-800" id="FAQ">
+      <div className="container mx-auto px-4">
+        <header className="mb-12 text-center">
+          <h2 className="font-raleway text-3xl font-extrabold">FAQ</h2>
+        </header>
 
-          <div className={cn("st-max-w-3xl st-mx-auto")}>
-            {faqItems.map((item) => (
-                <div
-                    key={item.id}
-                    className={cn(
-                        "st-mb-4",
-                        "st-border",
-                        "st-border-gray-200 dark:st-border-gray-700",
-                        "st-rounded-lg",
-                        "st-overflow-hidden"
-                    )}
+        <div className="max-w-3xl mx-auto">
+          {faqItems.map((item) => (
+            <div key={item.id} className="mb-4 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+              <button
+                className="flex justify-between items-center w-full p-[20px] text-left bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700"
+                onClick={() => toggleItem(item.id)}
+              >
+                <h3 className="font-raleway text-2xl font-bold">{item.question}</h3>
+                <svg
+                  className={`w-5 h-5 transition-transform ${openItem === item.id ? "rotate-180" : ""}`}
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
                 >
-                  <button
-                      className={cn(
-                          "st-flex st-justify-between st-items-center",
-                          "st-w-full st-p-5",
-                          "st-text-left",
-                          "st-bg-white dark:st-bg-gray-800",
-                          "st-hover:bg-gray-50 dark:st-hover:bg-gray-700"
-                      )}
-                      onClick={() => toggleItem(item.id)}
-                  >
-                    <h3 className={cn("st-text-lg st-font-medium")}>{item.question}</h3>
-                    <svg
-                        className={cn(
-                            "st-w-5 st-h-5",
-                            "st-transition-transform",
-                            openItem === item.id && "st-rotate-180"
-                        )}
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                    >
-                      <path
-                          fillRule="evenodd"
-                          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                          clipRule="evenodd"
-                      />
-                    </svg>
-                  </button>
-                  {openItem === item.id && (
-                      <div
-                          className={cn(
-                              "st-p-5",
-                              "st-border-t",
-                              "st-border-gray-200 dark:st-border-gray-700",
-                              "st-bg-white dark:st-bg-gray-800"
-                          )}
-                      >
-                        <p className={cn("st-text-gray-600 dark:st-text-gray-400")}>
-                          {item.answer}
-                        </p>
-                      </div>
-                  )}
+                  <path
+                    fillRule="evenodd"
+                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </button>
+              {openItem === item.id && (
+                <div className="p-[20px] border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+                  <p className="text-base font-normal text-gray-600 dark:text-gray-400">{item.answer}</p>
                 </div>
-            ))}
-          </div>
+              )}
+            </div>
+          ))}
         </div>
-      </section>
+      </div>
+    </section>
   )
 }
