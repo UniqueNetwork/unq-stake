@@ -193,6 +193,21 @@ export function formatAmount(amount: string | bigint): string {
   }
 }
 
+function formatAmountForCsv(amount: string | bigint): string {
+  try {
+    const bigNum = typeof amount === 'bigint' ? amount : BigInt(amount)
+    const divisor = BigInt(10 ** 18)
+    const whole = bigNum / divisor
+
+    const decimalPart = bigNum % divisor
+
+    return `${whole.toString()}.${decimalPart.toString().padStart(18, '0')}`
+  } catch (error: unknown) {
+    console.error("Error formatting amount for CSV:", error)
+    return "0"
+  }
+}
+
 export function mapStakingHistoryItemsToCsv (items: StakingHistoryItem[]): string[][] {
     const headers = ['Block Number', 'Hash', 'Date', 'Section', 'Method', 'Amount', 'Event Type']
 
@@ -202,7 +217,7 @@ export function mapStakingHistoryItemsToCsv (items: StakingHistoryItem[]): strin
         formatDate(item.blockTimestamp),
         item.section,
         item.method,
-        formatAmount(item.amount),
+        formatAmountForCsv(item.amount),
         item.eventType,
     ])
 
@@ -216,7 +231,7 @@ export function mapTransferHistoryToCsv(transfers: BalanceTransferItem[]): strin
         item.blockNumber.toString(),
         item.extrinsicHash,
         formatDate(item.blockTimestamp),
-        formatAmount(item.amount),
+        formatAmountForCsv(item.amount),
         item.direction,
         item.section,
         item.method,
