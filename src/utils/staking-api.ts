@@ -201,7 +201,7 @@ function formatAmountForCsv(amount: string | bigint): string {
 
     const decimalPart = bigNum % divisor
 
-    return `${whole.toString()}.${decimalPart.toString().padStart(18, '0')}`
+    return `${whole.toString()}${decimalPart > 0n ? `.${decimalPart.toString().padStart(18, '0')}` : ''}`
   } catch (error: unknown) {
     console.error("Error formatting amount for CSV:", error)
     return "0"
