@@ -26,27 +26,51 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
     const syncTheme = () => {
       const hasDarkmode = htmlEl.classList.contains("darkmode")
+      const hasLightmode = htmlEl.classList.contains("lightmode")
       const currentHasDark = htmlEl.classList.contains("dark")
       const currentHasLight = htmlEl.classList.contains("light")
       
-      if (hasDarkmode && !currentHasDark) {
+      let shouldBeDark = false
+      
+      if (hasDarkmode) {
+        shouldBeDark = true
+        console.log("Theme check: forced dark mode")
+      } else if (hasLightmode) {
+        shouldBeDark = false
+        console.log("Theme check: forced light mode")
+      } else {
+        shouldBeDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+        console.log(`Theme check: system theme, prefers-color-scheme dark: ${shouldBeDark}`)
+      }
+      
+      console.log(`Current classes: dark=${currentHasDark}, light=${currentHasLight}, should be dark=${shouldBeDark}`)
+      
+      if (shouldBeDark && !currentHasDark) {
+        console.log("Theme sync: switching to dark")
         observer?.disconnect()
         setTheme("dark")
         htmlEl.classList.add("dark")
         htmlEl.classList.remove("light")
         htmlEl.style.colorScheme = "dark"
-        observer?.observe(htmlEl, { attributes: true, attributeFilter: ["class"] })
-      } else if (!hasDarkmode && !currentHasLight) {
+        setTimeout(() => observer?.observe(htmlEl, { attributes: true, attributeFilter: ["class"] }), 0)
+      } else if (!shouldBeDark && !currentHasLight) {
         observer?.disconnect()
         setTheme("light")
         htmlEl.classList.add("light") 
         htmlEl.classList.remove("dark")
         htmlEl.style.colorScheme = "light"
-        observer?.observe(htmlEl, { attributes: true, attributeFilter: ["class"] })
+        setTimeout(() => observer?.observe(htmlEl, { attributes: true, attributeFilter: ["class"] }), 0)
       }
     }
 
     syncTheme()
+
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+    const handleSystemThemeChange = () => {
+      syncTheme()
+    }
+    
+    mediaQuery.addEventListener('change', handleSystemThemeChange)
 
     observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
@@ -63,6 +87,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
     return () => {
       observer.disconnect()
+      mediaQuery.removeEventListener('change', handleSystemThemeChange)
     }
   }, [])
 
