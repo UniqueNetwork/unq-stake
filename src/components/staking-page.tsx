@@ -21,6 +21,8 @@ function StakingTabs() {
   const [showUnstakingSuccessModal, setShowUnstakingSuccessModal] = useState(false)
   const [errorMessage, setErrorMessage] = useState("")
   const [transactionHash, setTransactionHash] = useState("")
+  const [blockNumber, setBlockNumber] = useState("")
+
 
   const extractTransactionHash = (result: any): string => {
     if (!result) return ""
@@ -72,6 +74,7 @@ function StakingTabs() {
                         setShowProgressModal(false)
                         const hash = extractTransactionHash(result)
                         setTransactionHash(hash)
+                        setBlockNumber(result.block?.header?.number)
                         setShowSuccessModal(true)
                       }}
                       onStakingError={(error) => {
@@ -86,9 +89,11 @@ function StakingTabs() {
                       onConnectWallet={() => setShowWalletModal(true)}
                       onStartUnstaking={() => setShowProgressModal(true)}
                       onUnstakingSuccess={(result) => {
+                        console.log(result)
                         setShowProgressModal(false)
                         const hash = extractTransactionHash(result)
                         setTransactionHash(hash)
+                        setBlockNumber(result.block?.header?.number)
                         setShowUnstakingSuccessModal(true)
                       }}
                       onUnstakingError={(error) => {
@@ -114,6 +119,7 @@ function StakingTabs() {
       {showSuccessModal && (
         <SuccessModal
           transactionHash={transactionHash}
+          blockNumber={blockNumber}
           onClose={() => setShowSuccessModal(false)}
           isUnstaking={false}
         />
@@ -121,6 +127,7 @@ function StakingTabs() {
       {showUnstakingSuccessModal && (
         <SuccessModal
           transactionHash={transactionHash}
+          blockNumber={blockNumber}
           onClose={() => setShowUnstakingSuccessModal(false)}
           isUnstaking={true}
         />

@@ -133,7 +133,7 @@ export function WalletProvider({ children }: WalletProviderProps) {
 
   // Generate Subscan URL for a transaction
   const getSubscanUrl = useCallback(
-    (txHash: string | any) => {
+    (txHash: string | any, blockNumber?: string) => {
       try {
         let hash = txHash
         if (typeof txHash === "object" && txHash !== null) {
@@ -144,8 +144,10 @@ export function WalletProvider({ children }: WalletProviderProps) {
           console.error("Invalid transaction hash for Subscan URL:", txHash)
           return ""
         }
-        const baseUrl = tokenSymbol === "QTZ" ? "https://quartz.subscan.io" : "https://unique.subscan.io"
-        return `${baseUrl}/extrinsic/${hash}`
+        const url = tokenSymbol !== "QTZ" ? `https://unique.subscan.io/extrinsic/${txHash}?tab=event`
+        : `https://polkadot.js.org/apps/?rpc=wss://ws-quartz.unique.network#/explorer/query/${blockNumber}`;
+
+        return url
       } catch (error) {
         console.error("Error generating Subscan URL:", error)
         return ""
