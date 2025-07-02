@@ -233,9 +233,9 @@ export default function StakingForm({
                     {/* Stake Button */}
                     <button
                         onClick={handleStake}
-                        disabled={isStaking || isLoading || !isValidAmount}
+                        disabled={isStaking || isLoading || !isValidAmount || !stakesLeft}
                         className={`w-full px-[24px] py-[16px] text-base font-semibold rounded-md ${
-                            isStaking || isLoading || !isValidAmount
+                            (isStaking || isLoading || !isValidAmount || !stakesLeft)
                                 ? "bg-gray-300 text-gray-500 dark:bg-gray-700 dark:text-gray-400 cursor-not-allowed"
                                 : isMaxAmount
                                     ? "bg-green-500 text-white hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700"

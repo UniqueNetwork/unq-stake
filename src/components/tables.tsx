@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import {
     type BalanceTransferItem, formatDate, formatHash, mapTransferHistoryToCsv, mapStakingHistoryItemsToCsv, type StakingHistoryItem,
 } from '@/utils/staking-api.ts';
@@ -85,6 +85,18 @@ export const StakingTable: React.FC<{ stake: StakingHistoryItem[], chain: Chain 
         page, setPage, pageSize, setPageSize, totalPages, currentPageData,
     } = usePagination(stake, 10);
 
+    const tableRef = useRef<HTMLDivElement>(null);
+   
+    const handlePageChange = (newPage: number) => {
+        setPage(newPage);
+        setTimeout(() => {
+            if (tableRef.current) {
+                const elementTop = tableRef.current.getBoundingClientRect().top + window.scrollY;
+                window.scrollTo({ top: elementTop - 170, behavior: 'smooth' });
+            }
+        }, 0);
+    };
+
     return (<>
         <table
             className="min-w-full bg-white dark:bg-gray-800 rounded-lg overflow-hidden">
@@ -113,7 +125,7 @@ export const StakingTable: React.FC<{ stake: StakingHistoryItem[], chain: Chain 
         <Pagination
             currentPage={page}
             totalPages={totalPages}
-            onPageChange={setPage}
+            onPageChange={handlePageChange}
             pageSize={pageSize}
             onPageSizeChange={setPageSize}
         />
@@ -130,6 +142,18 @@ export const UnstakingTable: React.FC<{ unStake: StakingHistoryItem[], chain: Ch
         page, setPage, pageSize, setPageSize, totalPages, currentPageData,
     } = usePagination(unStake, 10);
 
+    const tableRef = useRef<HTMLDivElement>(null);
+    const handlePageChange = (newPage: number) => {
+        setPage(newPage);
+        setTimeout(() => {
+            if (tableRef.current) {
+                const elementTop = tableRef.current.getBoundingClientRect().top + window.scrollY;
+                window.scrollTo({ top: elementTop - 170, behavior: 'smooth' });
+            }
+        }, 0);
+    };
+
+
     return (<>
         <table
             className="min-w-full bg-white dark:bg-gray-800 rounded-lg overflow-hidden">
@@ -159,7 +183,7 @@ export const UnstakingTable: React.FC<{ unStake: StakingHistoryItem[], chain: Ch
         <Pagination
             currentPage={page}
             totalPages={totalPages}
-            onPageChange={setPage}
+            onPageChange={handlePageChange}
             pageSize={pageSize}
             onPageSizeChange={setPageSize}
         />
@@ -176,7 +200,19 @@ export const TransfersTable: React.FC<{ transfers: BalanceTransferItem[], chain:
         page, setPage, pageSize, setPageSize, totalPages, currentPageData,
     } = usePagination(transfers, 10);
 
-    return (<>
+    const tableRef = useRef<HTMLDivElement>(null);
+    const handlePageChange = (newPage: number) => {
+        setPage(newPage);
+        setTimeout(() => {
+            if (tableRef.current) {
+                const elementTop = tableRef.current.getBoundingClientRect().top + window.scrollY;
+                window.scrollTo({ top: elementTop - 170, behavior: 'smooth' });
+            }
+        }, 0);
+    };
+
+
+    return (<div ref={tableRef}>
         <table
             className="min-w-full bg-white dark:bg-gray-800 rounded-lg overflow-hidden">
             <thead className="bg-gray-50 dark:bg-gray-700">
@@ -206,7 +242,7 @@ export const TransfersTable: React.FC<{ transfers: BalanceTransferItem[], chain:
         <Pagination
             currentPage={page}
             totalPages={totalPages}
-            onPageChange={setPage}
+            onPageChange={handlePageChange}
             pageSize={pageSize}
             onPageSizeChange={setPageSize}
         />
@@ -215,7 +251,7 @@ export const TransfersTable: React.FC<{ transfers: BalanceTransferItem[], chain:
             mapToRows={mapTransferHistoryToCsv}
             filename="transfer-history.csv"
         />
-    </>)
+    </div>)
 }
 
 export const StakingRewardsTable: React.FC<{ stakingRewards: BalanceTransferItem[], chain: Chain }> = ({stakingRewards, chain}) => {
@@ -223,7 +259,19 @@ export const StakingRewardsTable: React.FC<{ stakingRewards: BalanceTransferItem
         page, setPage, pageSize, setPageSize, totalPages, currentPageData,
     } = usePagination(stakingRewards, 10);
 
-    return (<>
+
+    const tableRef = useRef<HTMLDivElement>(null);
+    const handlePageChange = (newPage: number) => {
+        setPage(newPage);
+        setTimeout(() => {
+            if (tableRef.current) {
+                const elementTop = tableRef.current.getBoundingClientRect().top + window.scrollY;
+                window.scrollTo({ top: elementTop - 170, behavior: 'smooth' });
+            }
+        }, 0);
+    };
+
+    return (<div ref={tableRef}>
         <table
             className="min-w-full bg-white dark:bg-gray-800 rounded-lg overflow-hidden">
             <thead className="bg-gray-50 dark:bg-gray-700">
@@ -251,7 +299,7 @@ export const StakingRewardsTable: React.FC<{ stakingRewards: BalanceTransferItem
         <Pagination
             currentPage={page}
             totalPages={totalPages}
-            onPageChange={setPage}
+            onPageChange={handlePageChange}
             pageSize={pageSize}
             onPageSizeChange={setPageSize}
         />
@@ -260,5 +308,5 @@ export const StakingRewardsTable: React.FC<{ stakingRewards: BalanceTransferItem
             mapToRows={mapTransferHistoryToCsv}
             filename="staking-rewards-history.csv"
         />
-    </>)
+    </div>)
 }

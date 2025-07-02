@@ -6,7 +6,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const html = document.documentElement
     const sync = () => {
-
       const darkmode = html.classList.contains("darkmode")
       const dark = html.classList.contains("dark")
       if (darkmode && !dark) html.classList.add("dark")
@@ -19,7 +18,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }, [])
 
   return (
-    <NextThemesProvider attribute="class" defaultTheme="system">
+    <NextThemesProvider attribute="class" defaultTheme="light">
       {children}
     </NextThemesProvider>
   )
