@@ -1,4 +1,3 @@
-
 "use client"
 import { useEffect, useState } from "react"
 import { getWallets, type Wallet } from "@talismn/connect-wallets"
@@ -128,17 +127,28 @@ export default function WalletSelection({ onClose }: { onClose(): void }) {
                     <>
                       <p className="mt-4 mb-2 text-xs text-gray-500 dark:text-gray-400 text-center">Other wallets (not installed):</p>
                       <div className="space-y-3">
-                        {visibleNotInstalled.map(w => (
-                          <button
-                            key={w.extensionName}
-                            onClick={() => window.open(w.installUrl, "_blank")}
-                            className="w-full flex items-center p-3 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 opacity-80 transition"
-                          >
-                            <img src={w.logo.src} alt={w.logo.alt} className="w-7 h-7 mr-4" />
-                            <span className="flex-1 font-medium text-gray-700 dark:text-gray-200">{w.title}</span>
-                            <span className="text-xs text-blue-500 dark:text-blue-400">Install</span>
-                          </button>
-                        ))}
+                        {visibleNotInstalled.map(w => {
+                          const isNova = w.title === "Nova Wallet"
+                          return (
+                            <button
+                              key={w.extensionName}
+                              onClick={() => {
+                                if (isNova && isMobile) {
+                                  window.location.href = `https://app.novawallet.io/open/dapp?url=${import.meta.env.VITE_PUBLIC_SITE_URL}`
+                                } else {
+                                  window.open(w.installUrl, "_blank")
+                                }
+                              }}
+                              className="w-full flex items-center p-3 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 opacity-80 transition"
+                            >
+                              <img src={w.logo.src} alt={w.logo.alt} className="w-7 h-7 mr-4" />
+                              <span className="flex-1 font-medium text-gray-700 dark:text-gray-200">{w.title}</span>
+                              <span className="text-xs text-blue-500 dark:text-blue-400">
+                                {isNova && isMobile ? "Open" : "Install"}
+                              </span>
+                            </button>
+                          )
+                        })}
                       </div>
                     </>
                   )}
@@ -192,4 +202,3 @@ export default function WalletSelection({ onClose }: { onClose(): void }) {
     </div>
   )
 }
-
