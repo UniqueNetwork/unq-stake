@@ -104,7 +104,7 @@ export default function WalletSelection({ onClose }: { onClose(): void }) {
                           onClick={() => {
                             if (isNova) {
                               if (!window.walletExtension?.isNovaWallet) {
-                                window.location.href = `https://app.novawallet.io/open/dapp?url=${process.env.REACT_APP_PUBLIC_SITE_URL}`
+                                window.location.href = `https://app.novawallet.io/open/dapp?url=${import.meta.env.VITE_PUBLIC_SITE_URL}`
                                 return
                               }
                               const fallback = installed.find(x => x.title === "Polkadot.js")
