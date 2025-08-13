@@ -11,18 +11,26 @@ export function WalletButton() {
 
     const selectedWalletComponent = useMemo(() => {
         if (!wallet) return null
-        const isNovaWallet = typeof window !== 'undefined' && window.walletExtension?.isNovaWallet
 
         let walletLogoSrc, walletLogoAlt, walletTitle
 
-        if (isNovaWallet) {
+        const connectedWalletTitle = wallet.title || wallet.extensionName || ""
+
+        const shouldShowNova = (
+            connectedWalletTitle === "Nova Wallet" || 
+            (wallet.extensionName === "polkadot-js" && 
+             typeof window !== 'undefined' && 
+             window.walletExtension?.isNovaWallet)
+        )
+        
+        if (shouldShowNova) {
             walletLogoSrc = novaLogoString
             walletLogoAlt = "Nova Wallet logo"
             walletTitle = "Nova Wallet"
         } else {
             walletLogoSrc = wallet.logo.src
             walletLogoAlt = wallet.logo.alt
-            walletTitle = wallet.title || wallet.extensionName || "Unknown Wallet"
+            walletTitle = connectedWalletTitle || "Unknown Wallet"
         }
 
         return (

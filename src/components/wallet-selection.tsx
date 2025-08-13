@@ -38,7 +38,7 @@ export default function WalletSelection({ onClose }: { onClose(): void }) {
       return
     }
     const enableFn = chosenWallet.enable as (dapp: string) => Promise<void>
-    const subFn = chosenWallet.subscribeAccounts as (cb: (raw: any[]) => void) => () => void
+    const subFn = chosenWallet.subscribeAccounts as (cb: (raw: unknown[]) => void) => () => void
     enableFn("Unique Staking")
       .then(() => {
         if (!mounted) return
@@ -65,8 +65,74 @@ export default function WalletSelection({ onClose }: { onClose(): void }) {
 
   const installed = allWallets.filter(w => w.installed)
   const notInstalled = allWallets.filter(w => !w.installed)
-  const visibleInstalled = installed.filter(w => (isMobile ? w.title === "Nova Wallet" : w.title !== "Nova Wallet"))
-  const visibleNotInstalled = notInstalled.filter(w => (isMobile ? w.title === "Nova Wallet" : w.title !== "Nova Wallet"))
+  const isWalletVisibleOnMobile = (wallet: Wallet) => {
+    return wallet.title === "Nova Wallet" || wallet.title === "SubWallet"
+  }
+  
+  const visibleInstalled = installed.filter(w => {
+    if (isMobile) {
+      return isWalletVisibleOnMobile(w)
+    } else {
+      return w.title !== "Nova Wallet"
+    }
+  })
+  
+  const visibleNotInstalled = notInstalled.filter(w => {
+    if (isMobile) {
+      return isWalletVisibleOnMobile(w)
+    } else {
+      return w.title !== "Nova Wallet"
+    }
+  })
+
+  const createSubWalletDeepLink = () => {
+    const currentUrl = window.location.href
+    return `subwallet://browser?url=${encodeURIComponent(currentUrl)}`
+  }
+
+  const handleWalletClick = (w: Wallet, isInstalled: boolean) => {
+    const isNova = w.title === "Nova Wallet"
+    const isSubWallet = w.title === "SubWallet"
+    
+    if (isNova) {
+      if (!window.walletExtension?.isNovaWallet) {
+        window.location.href = `https://app.novawallet.io/open/dapp?url=${import.meta.env.VITE_PUBLIC_SITE_URL}`
+        return
+      }
+      const fallback = installed.find(x => x.title === "Polkadot.js")
+      if (fallback) setChosenWallet(fallback)
+    } else if (isSubWallet && isMobile) {
+      if (isInstalled) {
+        setChosenWallet(w)
+      } else {
+        const deepLink = createSubWalletDeepLink()
+        try {
+          window.location.href = deepLink
+        } catch {
+          const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
+          if (isIOS) {
+            window.location.href = "https://apps.apple.com/app/subwallet-polkadot-wallet/id1633050285"
+          } else {
+            window.location.href = "https://play.google.com/store/apps/details?id=app.subwallet.mobile"
+          }
+        }
+      }
+    } else {
+      setChosenWallet(w)
+    }
+  } 
+  const handleNotInstalledWalletClick = (w: Wallet) => {
+    const isNova = w.title === "Nova Wallet"
+    const isSubWallet = w.title === "SubWallet"
+    
+    if (isNova && isMobile) {
+      window.location.href = `https://app.novawallet.io/open/dapp?url=${import.meta.env.VITE_PUBLIC_SITE_URL}`
+    } else if (isSubWallet && isMobile) {
+      handleWalletClick(w, false)
+    } else {
+      window.open(w.installUrl, "_blank")
+    }
+  }
 
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
@@ -76,7 +142,17 @@ export default function WalletSelection({ onClose }: { onClose(): void }) {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
-        {error && <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/30 border border-red-300 dark:border-red-700 text-red-700 dark:text-red-300 rounded text-sm">{error}</div>}
+        {error && (
+          <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/30 border border-red-300 dark:border-red-700 text-red-700 dark:text-red-300 rounded text-sm">
+            {error}
+            <button 
+              onClick={() => setError(null)} 
+              className="ml-2 text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+            >
+              ×
+            </button>
+          </div>
+        )}
         {isConnecting && (
           <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8 max-w-md w-full text-center">
@@ -91,60 +167,57 @@ export default function WalletSelection({ onClose }: { onClose(): void }) {
             <>
               <h3 className="text-xl font-semibold mb-6 text-center text-gray-900 dark:text-white">Connect Wallet</h3>
               {visibleInstalled.length === 0 && visibleNotInstalled.length === 0 ? (
-                <div className="text-center py-4"><p className="text-gray-500 dark:text-gray-400">No wallets to display.</p></div>
+                <div className="text-center py-4">
+                  <p className="text-gray-500 dark:text-gray-400">No wallets to display.</p>
+                  {isMobile && (
+                    <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
+                      On mobile, please use Nova Wallet or SubWallet mobile app.
+                    </p>
+                  )}
+                </div>
               ) : (
                 <>
                   <div className="space-y-3">
-                    {visibleInstalled.map((w, i) => {
-                      const isNova = w.title === "Nova Wallet"
-                      return (
-                        <button
-                          key={w.extensionName + i}
-                          onClick={() => {
-                            if (isNova) {
-                              if (!window.walletExtension?.isNovaWallet) {
-                                window.location.href = `https://app.novawallet.io/open/dapp?url=${import.meta.env.VITE_PUBLIC_SITE_URL}`
-                                return
-                              }
-                              const fallback = installed.find(x => x.title === "Polkadot.js")
-                              if (fallback) setChosenWallet(fallback)
-                            } else {
-                              setChosenWallet(w)
-                            }
-                          }}
-                          className="w-full flex items-center p-3 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition"
-                        >
-                          <img src={w.logo.src} alt={w.logo.alt} className="w-7 h-7 mr-4" />
-                          <span className="flex-1 font-medium text-gray-700 dark:text-gray-200">{w.title}</span>
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-                          </svg>
-                        </button>
-                      )
-                    })}
+                    {visibleInstalled.map((w, i) => (
+                      <button
+                        key={w.extensionName + i}
+                        onClick={() => handleWalletClick(w, true)}
+                        className="w-full flex items-center p-3 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition"
+                      >
+                        <img src={w.logo.src} alt={w.logo.alt} className="w-7 h-7 mr-4" />
+                        <span className="flex-1 font-medium text-gray-700 dark:text-gray-200">{w.title}</span>
+                        {w.title === "SubWallet" && isMobile && (
+                          <span className="text-xs text-green-500 dark:text-green-400 mr-2">Mobile App</span>
+                        )}
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                      </button>
+                    ))}
                   </div>
                   {visibleNotInstalled.length > 0 && (
                     <>
-                      <p className="mt-4 mb-2 text-xs text-gray-500 dark:text-gray-400 text-center">Other wallets (not installed):</p>
+                      <p className="mt-4 mb-2 text-xs text-gray-500 dark:text-gray-400 text-center">
+                        {isMobile ? "Mobile wallet apps:" : "Other wallets (not installed):"}
+                      </p>
                       <div className="space-y-3">
                         {visibleNotInstalled.map(w => {
                           const isNova = w.title === "Nova Wallet"
+                          const isSubWallet = w.title === "SubWallet"
                           return (
                             <button
                               key={w.extensionName}
-                              onClick={() => {
-                                if (isNova && isMobile) {
-                                  window.location.href = `https://app.novawallet.io/open/dapp?url=${import.meta.env.VITE_PUBLIC_SITE_URL}`
-                                } else {
-                                  window.open(w.installUrl, "_blank")
-                                }
-                              }}
+                              onClick={() => handleNotInstalledWalletClick(w)}
                               className="w-full flex items-center p-3 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 opacity-80 transition"
                             >
                               <img src={w.logo.src} alt={w.logo.alt} className="w-7 h-7 mr-4" />
                               <span className="flex-1 font-medium text-gray-700 dark:text-gray-200">{w.title}</span>
                               <span className="text-xs text-blue-500 dark:text-blue-400">
-                                {isNova && isMobile ? "Open" : "Install"}
+                                {isMobile ? (
+                                  isNova ? "Open" : isSubWallet ? "Open" : "Install"
+                                ) : (
+                                  "Install"
+                                )}
                               </span>
                             </button>
                           )

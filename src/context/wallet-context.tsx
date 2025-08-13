@@ -411,12 +411,27 @@ const transformAccount = useCallback(
         }
         setIsConnecting(true)
         const { getWallets } = await import("@talismn/connect-wallets")
+        const isWalletVisibleOnMobile = (wallet: any) => {
+          return wallet.title === "Nova Wallet" || wallet.title === "SubWallet"
+        }
+        
         const availableWallets = getWallets().filter((w) => {
-          if (w.extensionName !== 'polkadot-js') return true
 
-          const isNova = w.title === 'Nova Wallet'
-
-          return isMobile ? isNova : !isNova
+          if (w.extensionName === 'polkadot-js') {
+            const isNova = w.title === 'Nova Wallet'
+            const shouldShowPolkadotJs = isMobile ? isNova : !isNova
+            if (!shouldShowPolkadotJs) return false
+          }
+          if (isMobile) {
+            return isWalletVisibleOnMobile(w)
+          } else {
+            return w.title !== "Nova Wallet"
+          }
+        }).filter((w) => {
+          if (isMobile && w.title === "SubWallet") {
+            return w.installed
+          }
+          return true
         })
 
         const savedWallet = availableWallets.find((w) => w.extensionName === savedWalletName)
@@ -427,14 +442,13 @@ const transformAccount = useCallback(
         }
         setWalletInternal(savedWallet)
       } catch (error) {
-        console.error("Failed to st-auto-connect wallet:", error)
+        console.error("Failed to auto-connect wallet:", error)
         setIsConnecting(false)
         setIsInitializing(false)
       }
     }
     autoConnectWallet()
-  }, [isInitialized, setWalletInternal])
-
+  }, [isInitialized, setWalletInternal, isMobile])
   // Finish initialization when connecting ends
   useEffect(() => {
     if (!isConnecting && isInitializing) {
