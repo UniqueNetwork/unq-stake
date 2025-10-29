@@ -42,7 +42,7 @@ export default function TokenSelector({ selectedToken, onSelectToken }: TokenSel
           </label>
         </div>
 
-        <div className="flex items-center">
+        <div className="flex items-center hidden">
           <input
               type="radio"
               id="token-quartz"
