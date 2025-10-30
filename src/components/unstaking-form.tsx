@@ -146,10 +146,10 @@ export default function UnstakingForm({
 
   return (
     <div className="flex flex-col space-y-6">
-      <div>
-      <label className="block text-lg font-normal text-gray-700 dark:text-gray-300 mb-2">Token</label>
+      {/* <div>
+        <label className="block text-lg font-normal text-gray-700 dark:text-gray-300 mb-2">Token</label>
         <TokenSelector selectedToken={tokenSymbol} onSelectToken={setTokenSymbol} />
-      </div>
+      </div> */}
 
       {connected ? (
         <WalletInfo activeTab="unstake" />

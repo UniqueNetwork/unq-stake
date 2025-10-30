@@ -34,11 +34,11 @@ export default function FAQ() {
       id: "future-plans",
       question: "What are the future plans for Unique Staking?",
       answer:
-        "AppPromotion features will be integrated into Unique Staking. We plan on enabling UNQ/QTZ owners to influence how the apps are sponsored and earn even more rewards as promoted dApps become successful.",
+        "AppPromotion features will be integrated into Unique Staking. We plan on enabling UNQ owners to influence how the apps are sponsored and earn even more rewards as promoted dApps become successful.",
     },
     {
       id: "metamask",
-      question: "Can I stake UNQ & QTZ tokens with MetaMask?",
+      question: "Can I stake UNQ tokens with MetaMask?",
       answer:
         "Currently, users can stake their tokens only using Substrate wallets, but in future releases, we'll add MetaMask staking functionality.",
     },

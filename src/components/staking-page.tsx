@@ -152,7 +152,7 @@ export default function StakingPage() {
                             <div className="text-blue-500">IS AVAILABLE</div>
                         </h1>
                         <p className="text-[26px] font-normal leading-[26px] text-center m-0">Earn 18% APY
-                            staking your UNQ and QTZ tokens</p>
+                            staking your UNQ tokens</p>
                     </div>
                 </section>
 
